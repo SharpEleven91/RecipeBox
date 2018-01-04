@@ -1,0 +1,143 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto");
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Roboto", sans-serif;
+  width: 100%;
+}
+
+#header {
+  margin-bottom: -200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#header .header-first, #header .header-last {
+  font-size: 45px;
+  font-weight: bold;
+}
+#header .header-last {
+  margin-top: 100px;
+  margin-left: -53px;
+}
+
+.app {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 800px;
+  height: 900px;
+}
+@media screen and (max-width: 800px) {
+  .app {
+    width: 500px;
+  }
+}
+
+.recipes {
+  max-height: fit-content;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-bottom: 25px;
+  width: 75%;
+  min-height: 100px;
+}
+.recipes #recipe--active {
+  max-height: fit-content;
+}
+.recipes .recipe {
+  overflow: hidden;
+  margin-top: 5px;
+  background-color: lightgray;
+  max-height: 40px;
+  width: 95%;
+  transition: 0.8s;
+}
+.recipes .recipe:nth-child(1) {
+  margin-top: 20px;
+}
+.recipes .recipe:last-child {
+  margin-bottom: 20px;
+}
+.recipes .recipe:hover, .recipes .recipe:target {
+  max-height: 1000px;
+}
+.recipes .recipe .recipe-header {
+  cursor: pointer;
+  background-color: #455;
+  min-height: 40px;
+}
+.recipes .recipe .recipe-header .recipe-header-name {
+  color: lightgray;
+  font-weight: bold;
+  font-size: 28px;
+  padding-top: 10px;
+  padding-left: 15px;
+}
+.recipes .recipe .recipe-header .recipe-header-name a {
+  color: white;
+  text-decoration: none;
+}
+.recipes .recipe .recipe-header .recipe-header-name a:visited {
+  color: white;
+}
+.recipes .recipe .recipe-hr {
+  background-color: white;
+  opacity: 1;
+  width: 102%;
+  height: 1px;
+}
+.recipes .recipe .recipe-ingredient-wrapper {
+  margin-top: -10px;
+  background-color: lightgray;
+  margin-left: 15px;
+}
+.recipes .recipe .recipe-ingredient-wrapper .recipe-ingredient-header {
+  font-size: 17px;
+  font-weight: bold;
+  margin-left: 15px;
+  margin-top: 25px;
+}
+.recipes .recipe .recipe-ingredient-wrapper .recipe-ingredient-header .recipe-ingredient-header-hr {
+  margin-top: 5px;
+  background-color: black;
+  opacity: 0.15;
+  height: 2px;
+  width: 100px;
+}
+.recipes .recipe .recipe-ingredient-wrapper .recipe-ingredient {
+  margin-top: -10px;
+}
+.recipes .recipe .recipe-ingredient-wrapper .recipe-ingredient:first-child {
+  margin-top: -20px;
+}
+.recipes .recipe .recipe-btn-wrapper {
+  background-color: lightgray;
+  margin: 0 25px 25px 25px;
+}
+.recipes .recipe .recipe-btn-wrapper .recipe-btn-delete {
+  margin-right: 10px;
+}
+
+#show-dialog {
+  align-self: center;
+}
+
+input {
+  background-color: lightgray;
+  border: none;
+  width: auto;
+  margin-left: 20px;
+}
+
+input:focus {
+  border: 1px solid white;
+  outline: none !important;
+}
+
+.ingredient-list {
+  width: 150px;
+}

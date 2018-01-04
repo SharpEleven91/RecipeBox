@@ -1,0 +1,248 @@
+function addRecipeDialogListener() {
+	let addRecipeDialog = document.querySelector("#dialog-add-recipe");
+	let showDialogAddRecipeButton = document.querySelector(
+		"#show-dialog-add-recipe"
+	);
+
+	if (!addRecipeDialog.showModal) {
+		dialogPolyfill.registerDialog(addRecipeDialog);
+	}
+
+	showDialogAddRecipeButton.addEventListener("click", function() {
+		addRecipeDialog.showModal();
+	});
+
+	addRecipeDialog
+		.querySelector("#add-recipe")
+		.addEventListener("click", function() {
+			addRecipeDialog.close();
+		});
+}
+
+function editRecipeDialogListeners() {
+	let editRecipeDialog = document.querySelector(".dialog-edit-recipe");
+	if (editRecipeDialog) {
+		if (!editRecipeDialog.showModal) {
+			dialogPolyfill.registerDialog(editRecipeDialog);
+		}
+		editRecipeDialog
+		.querySelector("#edit-recipe")
+		.addEventListener("click", function() {
+			editRecipeDialog.close()
+		});
+	}
+}
+
+class App extends React.Component {
+	constructor() {
+		super();
+	}
+	render() {
+		return <div className="app">
+						<RecipeHolder recipes={this.props.recipes}/>
+						<AddRecipeDialogShow/>
+						<AddRecipeDialog/>
+					 </div>
+	}
+}
+
+class AddRecipeDialogShow extends React.Component {
+	render() {
+		return  <button className="mdl-button mdl-js-button mdl-button--raised mdl-color--green-300 mdl-color-text--white mdl-js-ripple-effect" id="show-dialog-add-recipe">
+			ADD RECIPE
+		</button>
+	}
+}
+
+//buttons
+	
+class RemoveRecipe extends React.Component {
+	constructor() {
+		super();
+	}
+	handleClick() {
+		console.log(this.props);
+		store.dispatch({type: "REMOVE",
+									 id: this.props.id});
+	}
+	render() {
+		return <button onClick={this.handleClick.bind(this)} className="mdl-button mdl-js-button mdl-button--raised mdl-color--red mdl-color-text--white mdl-js-ripple-effect recipe-btn-delete">DELETE</button>
+	}
+}
+
+class AddRecipe extends React.Component {
+	handleClick() {
+		function parseInput(input) {
+			return input.split(",").map(function(index) {
+							return index.trim()})
+		}
+		let name = document.getElementById("recipeName").value;
+		let ingredients = document.getElementById("recipeIngredients").value;
+		if (name && ingredients) {
+			store.dispatch({type:"ADD",
+										 name: name,
+										 id: uuid.v4(),
+										 ingredients: parseInput(ingredients)});
+		}
+		document.getElementById("recipeName").value = "";
+		document.getElementById("recipeIngredients").value = "";
+	}
+	render() {
+		return <button onClick={this.handleClick.bind(this)} type="button" className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-color--green-300 mdl-color-text--white" id="add-recipe">ADD RECIPE</button>
+	}
+}
+
+class AddRecipeDialog extends React.Component {
+	render() {
+		return  <div className="dialogs">
+			<dialog className="mdl-dialog" id="dialog-add-recipe">
+  <h4 className="mdl-dialog__title">Recipe</h4>
+  <div className="mdl-dialog__content">
+   <form action="#" id="form-name">
+    <div className="mdl-textfield mdl-js-textfield">
+     <input className="mdl-textfield__input" type="text" id="recipeName"/>
+     <label className="mdl-textfield__label" for="recipe-name">Name</label>
+    </div>
+   </form>
+   <form action="#" id="form-ingredients">
+    <div className="mdl-textfield mdl-js-textfield">
+     <input className="mdl-textfield__input" type="text" id="recipeIngredients"/>
+     <label className="mdl-textfield__label" for="recipeIngredients">Separate with commas</label>
+    </div>
+   </form>
+  </div>
+  <div className="mdl-dialog__actions">
+
+   <AddRecipe/>
+  </div>
+ </dialog>
+
+
+			</div>
+	}
+}
+
+class RecipeHolder extends React.Component {
+	constructor() {
+		super();
+	}
+	render() {
+		return <div className="recipes demo-card-wide mdl-card mdl-shadow--2dp">
+						{ this.props.recipes.map(function(recipe) {
+							return <Recipe name={recipe[1].name} id={recipe[0]} ingredients={recipe[1].ingredients}/>
+						})}
+					</div>
+			}
+}
+
+class Recipe extends React.Component {
+	constructor() {
+		super();
+	}
+	render() {
+		let id = this.props.id;
+		return <div className="recipe" tabindex="0">
+   <div className="recipe-header">
+    <div className="recipe-header-name"><a href="#">{this.props.name}</a></div>
+   </div>
+   <div className="recipe-hr"></div>
+   <div className="recipe-ingredient-wrapper">
+    <div className="recipe-ingredient-header">
+     <div className="recipe-ingredient-header-text">Ingredients</div>
+     <div className="recipe-ingredient-header-hr"></div>
+    </div>
+    <ul className="mdl-list ingredient-list">
+				{this.props.ingredients.map(function(ingredient, index) {
+					return <Ingredient ingredient={ingredient} id={id} index={index}/>
+			})}
+    </ul>
+   </div>
+   <div className="recipe-btn-wrapper">
+    <RemoveRecipe id={this.props.id}/>
+	 </div>
+</div>
+	}
+}
+
+class Ingredient extends React.Component {
+	constructor() {
+		super();
+	}
+
+	handleInput(e) {
+		console.log(store.getState());
+		store.dispatch({type: "EDIT",
+									 	id: this.props.id,
+										ingredient: e.target.value,
+									 	index: this.props.index})
+	}
+	render() {
+		return <input class="ingredient" onChange={this.handleInput.bind(this)} contentEditable="true" placeholder={this.props.ingredient}/>
+	}
+}
+
+function RecipeApp(state = [], action) {
+	switch(action.type) {
+		case "EDIT":
+			let stateObj = {...state}
+			stateObj[action.id].ingredients[action.index] = action.ingredient
+			return stateObj
+														 
+		case "ADD":
+			return {...state, 
+				[action.id]:{
+					name: action.name,
+					ingredients: action.ingredients
+			}}
+		case "REMOVE":
+			let newState = {...state}
+			return Object.keys(newState)
+									 .filter(recipe => recipe != action.id)
+			             .reduce((obj, key) => {
+    									obj[key] = newState[key];
+    									return obj;
+  									}, {});
+		default:
+			return state;
+	}
+}
+function mapStateToProps(state) {
+	return  {recipes: Object.entries(state)};
+}
+
+function loadState() {
+	try {
+		const state = localStorage.getItem('state');
+		if (state === null) {
+			return undefined;
+		}
+		return JSON.parse(state);
+	} catch (err) {
+		return undefined;
+	}
+}
+
+function saveState(store) {
+	try {
+		const state = JSON.stringify(store);
+		localStorage.setItem('state', state);
+	}	catch (err) {}
+}
+
+let localState = loadState();
+let { Provider, connect } = ReactRedux;
+let store = Redux.createStore(RecipeApp, localState);
+let AppContainer = connect(mapStateToProps)(App);
+function render() {
+	ReactDOM.render(
+	<Provider store={store}>
+		<AppContainer/>
+	</Provider>,
+	document.getElementById("root"));
+}
+
+render();
+store.subscribe(function() {
+	saveState(store);
+})
+addRecipeDialogListener();

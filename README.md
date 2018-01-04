@@ -1,6 +1,6 @@
-## Recipe Box
+# Recipe Box
 
-# Dependencies
+### Dependencies
 - Redux
 - React-Redux
 - React
